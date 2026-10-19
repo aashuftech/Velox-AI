@@ -1,4 +1,9 @@
-const PRIMARY_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const configuredBaseUrl =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const normalizedBaseUrl = configuredBaseUrl.replace(/\/+$/, '');
+const PRIMARY_URL = /\/api$/i.test(normalizedBaseUrl)
+  ? normalizedBaseUrl
+  : `${normalizedBaseUrl}/api`;
 const FALLBACK_URL = '/api';
 
 const fetchWithFallback = async (endpoint, options = {}) => {
