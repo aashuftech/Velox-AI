@@ -1,0 +1,28 @@
+{
+  "name": "ai-chatbot-mern",
+  "version": "1.0.0",
+  "description": "Foundation for MERN AI Chatbot assessment project",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend",
+    "start:backend": "npm run start --prefix backend"
+  },
+  "keywords": [
+    "mern",
+    "react",
+    "vite",
+    "express",
+    "mongodb",
+    "mongoose",
+    "ai-chatbot"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

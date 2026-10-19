@@ -1,0 +1,785 @@
+/* =========================================================
+   VELOX AI - EXACT "Velox AI Chat.pdf" REFERENCE REPRODUCTION
+   Colors & Theme:
+     - Background: Near-black/charcoal (#0D0E15)
+     - Sidebar & Cards: Dark gray (#13141E, #181926)
+     - Borders: Subtle border (#252738)
+     - Text Primary: White (#FFFFFF)
+     - Text Muted: Muted gray (#9496A8)
+     - Accent Teal: (#2DD4BF)
+     - Primary Button: Violet / Purple (#7C5CFC, #6D4AFF)
+   ========================================================= */
+
+:root {
+  --bg-main: #0d0e15;
+  --bg-sidebar: #13141e;
+  --bg-card: #181926;
+  --bg-card-subtle: #151622;
+  --bg-user-bubble: #1e1f2f;
+  --border-subtle: #252738;
+  --border-active: #363950;
+  --text-primary: #ffffff;
+  --text-muted: #9496a8;
+  --text-secondary: #c2c4d6;
+  --accent-teal: #2dd4bf;
+  --accent-purple: #7c5cfc;
+  --accent-purple-hover: #6d4aff;
+  --accent-purple-light: #9074ff;
+  --color-error: #ef4444;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --transition: all 0.18s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  height: 100dvh;
+  width: 100%;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  display: flex;
+}
+
+/* Accessibility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-active);
+}
+
+/* =========================================================
+   APP CONTAINER
+   ========================================================= */
+
+.velox-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  background-color: var(--bg-main);
+  overflow: hidden;
+  position: relative;
+}
+
+/* =========================================================
+   SIDEBAR (MATCHING PDF)
+   ========================================================= */
+
+.velox-sidebar {
+  width: 260px;
+  height: 100%;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 50;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.velox-sidebar-backdrop {
+  display: none;
+}
+
+.velox-sidebar-top {
+  padding: 22px 18px 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.velox-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.velox-logo-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2dd4bf 0%, #7c5cfc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(45, 212, 191, 0.2);
+}
+
+.velox-logo-text {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: #ffffff;
+}
+
+.velox-logo-text .teal-highlight {
+  color: var(--accent-teal);
+  margin-left: 2px;
+}
+
+.velox-sidebar-close {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.velox-new-chat-wrapper {
+  padding: 6px 16px 14px 16px;
+}
+
+.velox-new-chat-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.velox-new-chat-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-active);
+}
+
+.velox-sidebar-groups {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  padding: 0 12px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.velox-group-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #63667c;
+  padding: 4px 10px 2px 10px;
+}
+
+.velox-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.velox-chat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 7px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+}
+
+.velox-chat-item:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.velox-chat-item.active {
+  background-color: #1c1d2c;
+  border-color: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.velox-chat-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.velox-chat-delete {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-size: 0.85rem;
+}
+
+.velox-chat-item:hover .velox-chat-delete {
+  opacity: 0.8;
+}
+
+.velox-chat-delete:hover {
+  opacity: 1;
+  color: #ffffff;
+}
+
+/* Sidebar Profile Bottom Card */
+.velox-sidebar-bottom {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.velox-profile-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.velox-profile-card:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-active);
+}
+
+.velox-profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.velox-profile-tier {
+  font-size: 0.9rem;
+  color: var(--accent-teal);
+  font-weight: 600;
+}
+
+/* =========================================================
+   MAIN VIEWPORT & TOP HEADER (MATCHING PDF)
+   ========================================================= */
+
+.velox-main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-main);
+  position: relative;
+  overflow: hidden;
+}
+
+.velox-topbar {
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  z-index: 20;
+}
+
+.velox-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.velox-hamburger {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--text-muted);
+  padding: 6px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Velox Turbo Selector Pill */
+.velox-model-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #161724;
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.velox-model-pill:hover {
+  background-color: #1d1e2e;
+  border-color: var(--border-active);
+}
+
+.velox-model-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-teal);
+  box-shadow: 0 0 6px var(--accent-teal);
+}
+
+.velox-model-chevron {
+  font-size: 0.72rem;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+.velox-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Share Button */
+.velox-share-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.velox-share-btn:hover {
+  color: #ffffff;
+  border-color: var(--border-active);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* =========================================================
+   MESSAGES CHAT AREA (MATCHING PDF)
+   ========================================================= */
+
+.velox-chat-canvas {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  padding: 16px 36px 8px 36px;
+  display: flex;
+  flex-direction: column;
+}
+
+.velox-chat-content-limit {
+  max-width: 820px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* User Message: Clean bubble on the right */
+.velox-user-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.velox-user-bubble {
+  max-width: 72%;
+  background-color: var(--bg-user-bubble);
+  border: 1px solid #2e3046;
+  border-radius: 14px;
+  padding: 12px 18px;
+  color: #ffffff;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  word-break: break-word;
+}
+
+/* Assistant Message: Row on the left with avatar */
+.velox-assistant-row {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.velox-assistant-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2dd4bf 0%, #7c5cfc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.velox-assistant-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.velox-assistant-text {
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* 3-Column Plan Cards (Matching PDF Goa trip) */
+.velox-plan-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 4px 0;
+}
+
+.velox-plan-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.velox-plan-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-teal);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.velox-plan-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.velox-plan-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Action Icons below Assistant message (Copy, Refresh) */
+.velox-msg-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.velox-action-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.velox-action-icon-btn:hover {
+  color: #ffffff;
+}
+
+/* Thinking indicator */
+.velox-thinking-bubble {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.velox-thinking-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent-purple);
+  animation: veloxBlink 1.4s infinite ease-in-out both;
+}
+
+.velox-thinking-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.velox-thinking-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes veloxBlink {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   BOTTOM COMPOSER & SUGGESTION CHIPS (MATCHING PDF)
+   NO HORIZONTAL LINE SEPARATOR ABOVE COMPOSER
+   ========================================================= */
+
+.velox-bottom-zone {
+  padding: 8px 36px 18px 36px;
+  background-color: var(--bg-main);
+  /* Notice: user explicitly requested "Remove the thin horizontal line above the composer" */
+  border-top: none;
+  flex-shrink: 0;
+  z-index: 20;
+}
+
+.velox-bottom-container {
+  max-width: 820px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Composer Form */
+.velox-composer-box {
+  background-color: #161724;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 8px 12px 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color var(--transition);
+}
+
+.velox-composer-box:focus-within {
+  border-color: var(--border-active);
+}
+
+.velox-attachment-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.velox-attachment-btn:hover {
+  color: #ffffff;
+}
+
+.velox-composer-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.94rem;
+  line-height: 1.45;
+  resize: none;
+  min-height: 24px;
+  max-height: 140px;
+  padding: 6px 0;
+}
+
+.velox-composer-input::placeholder {
+  color: #5d6077;
+}
+
+/* Purple Send Button (Matching PDF) */
+.velox-send-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-color: var(--accent-purple);
+  border: none;
+  color: #0d0e15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.velox-send-btn:hover:not(:disabled) {
+  background-color: var(--accent-purple-light);
+}
+
+.velox-send-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Disclaimer text underneath */
+.velox-disclaimer-text {
+  text-align: center;
+  font-size: 0.72rem;
+  color: #55576d;
+  padding-top: 2px;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN (MOBILE & TABLET)
+   ========================================================= */
+
+@media (max-width: 860px) {
+  .velox-plan-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .velox-chat-canvas {
+    padding: 16px 16px 8px 16px;
+  }
+
+  .velox-bottom-zone {
+    padding: 6px 16px 14px 16px;
+  }
+
+  .velox-user-bubble {
+    max-width: 86%;
+  }
+}
+
+@media (max-width: 768px) {
+  .velox-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.7);
+  }
+
+  .velox-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .velox-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 45;
+    transition: opacity 0.25s ease;
+  }
+
+  .velox-sidebar-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .velox-sidebar-close {
+    display: block;
+  }
+
+  .velox-hamburger {
+    display: flex;
+  }
+
+  .velox-topbar {
+    padding: 0 16px;
+  }
+}
