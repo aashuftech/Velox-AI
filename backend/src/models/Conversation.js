@@ -8,6 +8,15 @@ const conversationSchema = new mongoose.Schema(
       trim: true,
       default: 'New Chat',
     },
+    isCustomTitle: {
+      type: Boolean,
+      default: false,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      index: true,
+    },
     metadata: {
       model: {
         type: String,

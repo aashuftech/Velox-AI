@@ -5,6 +5,8 @@ export const ChatHeader = ({
   isConnected = true,
   providerName = 'Google Gemini (Live)',
   storageMode = 'mongodb',
+  user = null,
+  onOpenAuth,
 }) => {
   const [model, setModel] = useState('Velox Turbo');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,7 +54,7 @@ export const ChatHeader = ({
             className="velox-model-pill"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             title={`Active AI: ${providerName} | Database: ${
-              isAtlas ? 'MongoDB Atlas (Persistent)' : 'In-Memory Fallback'
+              isAtlas ? 'MongoDB Atlas (Persistent)' : 'In-Memory Guest'
             }`}
           >
             <span
@@ -86,10 +88,11 @@ export const ChatHeader = ({
               <div
                 style={{
                   padding: '6px 10px 4px 10px',
-                  fontSize: '0.7rem',
+                  fontSize: '0.75rem',
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px',
-                  color: '#63667c',
+                  color: '#9496a8',
+                  fontWeight: 600,
                 }}
               >
                 Model Engine
@@ -103,7 +106,7 @@ export const ChatHeader = ({
                   }}
                   style={{
                     padding: '8px 12px',
-                    fontSize: '0.84rem',
+                    fontSize: '0.86rem',
                     color: m === model ? '#2dd4bf' : '#ffffff',
                     cursor: 'pointer',
                     borderRadius: '6px',
@@ -114,7 +117,7 @@ export const ChatHeader = ({
                   }}
                 >
                   <span>{m}</span>
-                  {m === model && <span style={{ fontSize: '0.75rem' }}>✓</span>}
+                  {m === model && <span style={{ fontSize: '0.8rem' }}>✓</span>}
                 </div>
               ))}
 
@@ -129,9 +132,9 @@ export const ChatHeader = ({
               <div
                 style={{
                   padding: '4px 10px',
-                  fontSize: '0.74rem',
+                  fontSize: '0.78rem',
                   color: '#9496a8',
-                  lineHeight: 1.4,
+                  lineHeight: 1.45,
                 }}
               >
                 <div>
@@ -141,7 +144,7 @@ export const ChatHeader = ({
                 <div>
                   <strong style={{ color: '#ffffff' }}>Storage:</strong>{' '}
                   <span style={{ color: isAtlas ? '#2dd4bf' : '#f59e0b' }}>
-                    {isAtlas ? 'MongoDB Atlas' : 'In-Memory'}
+                    {isAtlas ? 'MongoDB Atlas' : 'In-Memory (Guest)'}
                   </span>
                 </div>
               </div>
@@ -151,6 +154,35 @@ export const ChatHeader = ({
       </div>
 
       <div className="velox-topbar-right">
+        {/* Login & Signup buttons in top-right header for guest users */}
+        {!user ? (
+          <div className="velox-header-auth-group">
+            <button
+              type="button"
+              className="velox-header-btn velox-header-login-btn"
+              onClick={() => onOpenAuth && onOpenAuth('login')}
+            >
+              Log in
+            </button>
+            <button
+              type="button"
+              className="velox-header-btn velox-header-signup-btn"
+              onClick={() => onOpenAuth && onOpenAuth('signup')}
+            >
+              Sign up
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="velox-header-upgrade-btn"
+            onClick={() => alert('You are currently on the Velox AI plan. Upgrade options coming soon!')}
+            title="Upgrade your plan"
+          >
+            Upgrade
+          </button>
+        )}
+
         {/* Share Button from PDF */}
         <button
           type="button"
