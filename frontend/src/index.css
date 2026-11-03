@@ -11,7 +11,7 @@
    ========================================================= */
 
 :root {
-  --bg-main: #0d0e15;
+  --bg-main: #0b0b18;
   --bg-sidebar: #13141e;
   --bg-card: #181926;
   --bg-card-subtle: #151622;
@@ -134,6 +134,25 @@ body {
   justify-content: space-between;
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.2px;
+}
+
+.brand-name b {
+  color: #34c7b5;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
 .velox-logo {
   display: flex;
   align-items: center;
@@ -163,8 +182,12 @@ body {
   color: #ffffff;
 }
 
+.teal-highlight {
+  color: var(--accent-teal, #2dd4bf);
+}
+
 .velox-logo-text .teal-highlight {
-  color: var(--accent-teal);
+  color: var(--accent-teal, #2dd4bf);
   margin-left: 2px;
 }
 
@@ -179,28 +202,29 @@ body {
 }
 
 .velox-new-chat-wrapper {
-  padding: 6px 16px 14px 16px;
+  padding: 4px 12px 10px 12px;
 }
 
 .velox-new-chat-btn {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  background-color: rgba(255, 255, 255, 0.04);
-  color: #ffffff;
-  border: 1px solid var(--border-subtle);
+  gap: 10px;
+  background-color: transparent;
+  color: #ececec;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.92rem;
+  padding: 8px 12px;
+  font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
 }
 
 .velox-new-chat-btn:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: var(--border-active);
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
 }
 
 .velox-sidebar-groups {
@@ -209,10 +233,10 @@ body {
   overflow-y: auto;
   scrollbar-gutter: stable;
   overscroll-behavior: contain;
-  padding: 0 12px 14px 12px;
+  padding: 0 10px 14px 10px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
 }
 
 .velox-guest-sidebar-container {
@@ -248,19 +272,24 @@ body {
   line-height: 1.45;
 }
 
+.velox-group-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .velox-group-title {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.9px;
-  text-transform: uppercase;
-  color: #76798e;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  color: #8e8ea0;
   padding: 6px 10px 4px 10px;
 }
 
 .velox-group-list {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .velox-chat-item {
@@ -268,25 +297,26 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 9px 12px;
+  padding: 7px 10px;
   border-radius: 8px;
   background-color: transparent;
   border: 1px solid transparent;
-  color: var(--text-muted);
-  font-size: 0.92rem;
+  color: #c4c7c5;
+  font-size: 0.88rem;
+  line-height: 1.35;
   cursor: pointer;
-  transition: var(--transition);
+  transition: background-color 0.15s ease, color 0.15s ease;
   text-align: left;
 }
 
 .velox-chat-item:hover {
   color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 .velox-chat-item.active {
-  background-color: #1c1d2c;
-  border-color: rgba(255, 255, 255, 0.06);
+  background-color: #212124;
+  border-color: rgba(255, 255, 255, 0.05);
   color: #ffffff;
   font-weight: 500;
 }
@@ -295,7 +325,7 @@ body {
   background-color: #161724;
   border-color: rgba(99, 102, 241, 0.25);
   cursor: default;
-  padding: 6px 8px;
+  padding: 5px 8px;
 }
 
 .velox-chat-title {
@@ -303,8 +333,8 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.92rem;
-  line-height: 1.4;
+  font-size: 0.88rem;
+  line-height: 1.35;
   margin-right: 6px;
 }
 
@@ -505,7 +535,7 @@ body {
 }
 
 /* =========================================================
-   MAIN VIEWPORT & TOP HEADER (MATCHING PDF)
+   MAIN VIEWPORT & TOP HEADER (MATCHING PDF & CHAT-AREA)
    ========================================================= */
 
 .velox-main {
@@ -517,6 +547,102 @@ body {
   background-color: var(--bg-main);
   position: relative;
   overflow: hidden;
+}
+
+.chat-area {
+  position: relative;
+  overflow: hidden;
+  background: #0b0b18;
+}
+
+.chat-content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.wm {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wm-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px) 0 0 / 40px 40px;
+}
+
+.wm-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(99,102,241,.24), transparent 55%);
+  animation: wm-breathe 5s ease-in-out infinite;
+}
+
+.wm-beam {
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: -160px;
+  width: 110px;
+  background: linear-gradient(90deg, transparent, rgba(165,180,252,.09), transparent);
+  transform: rotate(18deg);
+  animation: wm-sweep 9s linear infinite;
+}
+
+.wm-text {
+  position: absolute;
+  top: 5%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font: 500 clamp(70px, 10vw, 150px) / 1 sans-serif;
+  letter-spacing: .12em;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1.2px rgba(255,255,255,.06);
+}
+
+.wm-vwrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: min(74%, 620px);
+  transform: translate(-50%, -46%);
+}
+
+.wm-vwrap svg {
+  height: 100%;
+  width: auto;
+  display: block;
+  animation: wm-float 6s ease-in-out infinite;
+}
+
+.wm-e {
+  animation: wm-echo 3.2s ease-in-out infinite;
+}
+.wm-e1 { animation-delay: .9s; }
+.wm-e2 { animation-delay: .6s; }
+.wm-e3 { animation-delay: .3s; }
+.wm-e4 { animation-delay: 0s; }
+
+@keyframes wm-breathe { 0%,100% { opacity: .55 } 50% { opacity: 1 } }
+@keyframes wm-sweep   { from { left: -160px } to { left: 105% } }
+@keyframes wm-float   { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
+@keyframes wm-echo    { 0%,100% { opacity: .3 } 50% { opacity: 1 } }
+
+@media (prefers-reduced-motion: reduce) {
+  .wm * { animation: none !important; }
 }
 
 .velox-topbar {
@@ -619,7 +745,7 @@ body {
   overflow-y: auto;
   scrollbar-gutter: stable;
   overscroll-behavior: contain;
-  padding: 16px 36px 8px 36px;
+  padding: 24px 36px 16px 36px;
   display: flex;
   flex-direction: column;
 }
@@ -631,6 +757,60 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+/* Velox Welcome Hero (Empty State Matching Reference) */
+.velox-welcome-hero {
+  margin: auto;
+  text-align: center;
+  padding: 24px 20px 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.velox-welcome-hero svg {
+  margin-bottom: 16px;
+  filter: drop-shadow(0 6px 20px rgba(91, 94, 214, 0.3));
+}
+
+.velox-welcome-badge {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #8b5cf6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px auto;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.velox-welcome-title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.velox-welcome-title .teal-highlight {
+  color: #2dd4bf;
+  margin-left: 3px;
+}
+
+.velox-welcome-subtitle {
+  color: #9496a8;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
 /* User Message: Clean bubble on the right */
@@ -796,9 +976,8 @@ body {
    ========================================================= */
 
 .velox-bottom-zone {
-  padding: 8px 36px 18px 36px;
-  background-color: var(--bg-main);
-  /* Notice: user explicitly requested "Remove the thin horizontal line above the composer" */
+  padding: 8px 36px 20px 36px;
+  background-color: transparent;
   border-top: none;
   flex-shrink: 0;
   z-index: 20;
@@ -815,34 +994,22 @@ body {
 
 /* Composer Form */
 .velox-composer-box {
-  background-color: #161724;
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 8px 12px 8px 16px;
+  background-color: rgba(18, 19, 36, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  border-radius: 20px;
+  padding: 8px 10px 8px 20px;
   display: flex;
   align-items: center;
   gap: 12px;
-  transition: border-color var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
 .velox-composer-box:focus-within {
-  border-color: var(--border-active);
-}
-
-.velox-attachment-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-}
-
-.velox-attachment-btn:hover {
-  color: #ffffff;
+  border-color: rgba(99, 102, 241, 0.55);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(99, 102, 241, 0.18);
 }
 
 .velox-composer-input {
@@ -852,49 +1019,55 @@ body {
   outline: none;
   color: #ffffff;
   font-family: inherit;
-  font-size: 0.94rem;
+  font-size: 0.95rem;
   line-height: 1.45;
   resize: none;
   min-height: 24px;
   max-height: 140px;
-  padding: 6px 0;
+  padding: 8px 0;
 }
 
 .velox-composer-input::placeholder {
-  color: #5d6077;
+  color: #636681;
 }
 
-/* Purple Send Button (Matching PDF) */
+/* Purple Send Button (Matching Reference) */
 .velox-send-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background-color: var(--accent-purple);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #5b5bf0 0%, #6e44f8 100%);
   border: none;
-  color: #0d0e15;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: var(--transition);
   flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(91, 91, 240, 0.35);
 }
 
 .velox-send-btn:hover:not(:disabled) {
-  background-color: var(--accent-purple-light);
+  background: linear-gradient(135deg, #6c6cf5 0%, #7d57f9 100%);
+  box-shadow: 0 6px 18px rgba(91, 91, 240, 0.5);
+  transform: translateY(-1px);
 }
 
 .velox-send-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 /* Disclaimer text underneath */
 .velox-disclaimer-text {
   text-align: center;
-  font-size: 0.72rem;
-  color: #55576d;
-  padding-top: 2px;
+  font-size: 0.84rem;
+  color: #7b7e98;
+  padding-top: 4px;
+  letter-spacing: 0.01em;
 }
 
 /* =========================================================
@@ -908,7 +1081,7 @@ body {
   }
 
   .velox-chat-canvas {
-    padding: 16px 16px 8px 16px;
+    padding: 20px 16px 14px 16px;
   }
 
   .velox-bottom-zone {

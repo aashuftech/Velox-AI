@@ -275,8 +275,15 @@ export const sendMessage = async (req, res) => {
       text: m.text,
     })).reverse();
 
-    // 3. Generate AI response via Gemini
-    const aiResult = await generateAIResponse(trimmedText, existingHistory);
+    // 3. Generate AI response via Gemini with automatic fallback
+    let aiResult;
+    try {
+      aiResult = await generateAIResponse(trimmedText, existingHistory);
+    } catch (aiError) {
+      // Clean up orphaned user message so chat history stays consistent and uncorrupted
+      await Message.findByIdAndDelete(userMessage._id).catch(() => {});
+      throw aiError;
+    }
 
     // 4. Persist AI assistant message in MongoDB Atlas
     const assistantMessage = await Message.create({

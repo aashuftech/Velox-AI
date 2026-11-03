@@ -7,6 +7,8 @@ import { MessageList } from './components/MessageList.jsx';
 import { ChatInput } from './components/ChatInput.jsx';
 import { Login } from './components/Login.jsx';
 import { Signup } from './components/Signup.jsx';
+import ChatWatermark from './components/ChatWatermark.jsx';
+import VeloxMark from './components/VeloxMark.jsx';
 
 export const App = () => {
   // Authentication state
@@ -309,7 +311,9 @@ export const App = () => {
         setMessages((prev) => [...prev, assistantMessage]);
         setErrorMessage('');
       } catch (err) {
-        setErrorMessage(`Failed to generate AI response: ${err.message}`);
+        setErrorMessage(
+          `Failed to generate AI response: ${err.response?.data?.error || err.response?.data?.message || err.message}`
+        );
       } finally {
         setIsLoading(false);
       }
@@ -367,7 +371,9 @@ export const App = () => {
       if (err.response?.status === 401) {
         setUser(null);
       } else {
-        setErrorMessage(`Failed to send message: ${err.message}`);
+        setErrorMessage(
+          `Failed to send message: ${err.response?.data?.error || err.response?.data?.message || err.message}`
+        );
       }
       setMessages((prev) => prev.filter((m) => m._id !== tempUserMsg._id));
     } finally {
@@ -387,11 +393,11 @@ export const App = () => {
   if (isAuthChecking) {
     return (
       <div className="velox-auth-loading-screen">
-        <div className="velox-auth-logo">
-          <div className="velox-logo-icon">V</div>
-          <div className="velox-logo-text">
-            Velox<span className="teal-highlight">AI</span>
-          </div>
+        <div className="brand velox-auth-logo">
+          <VeloxMark size={38} />
+          <span className="brand-name" style={{ fontSize: '22px' }}>
+            Velox<b>AI</b>
+          </span>
         </div>
         <div className="velox-auth-loading-spinner" />
       </div>
@@ -414,60 +420,64 @@ export const App = () => {
         onOpenAuth={openAuthModal}
       />
 
-      <main className="velox-main">
-        <ChatHeader
-          onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
-          isConnected={isBackendConnected}
-          providerName={providerName}
-          storageMode={user ? storageMode : 'in-memory-guest'}
-          user={user}
-          onOpenAuth={openAuthModal}
-        />
+      <main className="velox-main chat-area">
+        <ChatWatermark />
+        <div className="chat-content">
+          <ChatHeader
+            onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
+            isConnected={isBackendConnected}
+            providerName={providerName}
+            storageMode={user ? storageMode : 'in-memory-guest'}
+            user={user}
+            onOpenAuth={openAuthModal}
+          />
 
-        {errorMessage && (
-          <div
-            className="velox-alert-banner"
-            role="alert"
-            style={{
-              margin: '8px 24px',
-              backgroundColor: '#1c141d',
-              border: '1px solid #ef4444',
-              borderRadius: '8px',
-              padding: '10px 16px',
-              color: '#ef4444',
-              fontSize: '0.85rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span>{errorMessage}</span>
-            <button
-              type="button"
-              className="velox-alert-dismiss"
-              onClick={() => setErrorMessage('')}
-              aria-label="Dismiss alert"
+          {errorMessage && (
+            <div
+              className="velox-alert-banner"
+              role="alert"
               style={{
-                background: 'transparent',
-                border: 'none',
+                margin: '8px 24px',
+                backgroundColor: '#1c141d',
+                border: '1px solid #ef4444',
+                borderRadius: '8px',
+                padding: '10px 16px',
                 color: '#ef4444',
-                cursor: 'pointer',
-                fontSize: '1rem',
+                fontSize: '0.85rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               }}
             >
-              ✕
-            </button>
-          </div>
-        )}
+              <span>{errorMessage}</span>
+              <button
+                type="button"
+                className="velox-alert-dismiss"
+                onClick={() => setErrorMessage('')}
+                aria-label="Dismiss alert"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#ef4444',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          )}
 
-        <MessageList
-          messages={messages}
-          isLoading={isLoading}
-          onRegenerate={handleRegenerate}
-          onSelectPrompt={handleSendMessage}
-        />
+          <MessageList
+            messages={messages}
+            isLoading={isLoading}
+            onRegenerate={handleRegenerate}
+            onSelectPrompt={handleSendMessage}
+            activeConversationId={activeConversationId}
+          />
 
-        <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+          <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+        </div>
       </main>
 
       {/* Auth Modal Overlay for Login & Signup when triggered */}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SidebarProfile } from './SidebarProfile.jsx';
+import VeloxMark from './VeloxMark.jsx';
 
 export const ChatSidebar = ({
   conversations = [],
@@ -68,35 +69,6 @@ export const ChatSidebar = ({
     if (e) e.stopPropagation();
     setEditingId(null);
   };
-
-  // Group conversations based on timestamps
-  const todayConversations = [];
-  const pastConversations = [];
-  const olderConversations = [];
-
-  const now = new Date();
-  const startOfToday = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate()
-  ).getTime();
-  const sevenDaysAgo = new Date(now);
-  sevenDaysAgo.setDate(now.getDate() - 7);
-  sevenDaysAgo.setHours(0, 0, 0, 0);
-
-  conversations.forEach((conv) => {
-    const convTime = conv.updatedAt || conv.createdAt
-      ? new Date(conv.updatedAt || conv.createdAt).getTime()
-      : 0;
-
-    if (convTime >= startOfToday) {
-      todayConversations.push(conv);
-    } else if (convTime >= sevenDaysAgo.getTime()) {
-      pastConversations.push(conv);
-    } else {
-      olderConversations.push(conv);
-    }
-  });
 
   // Reusable conversation item renderer
   const renderConversationItem = (conv) => {
@@ -260,11 +232,11 @@ export const ChatSidebar = ({
 
       <aside className={`velox-sidebar ${isOpen ? 'open' : ''}`}>
         <div className="velox-sidebar-top">
-          <div className="velox-logo" onClick={user ? onNewConversation : undefined}>
-            <div className="velox-logo-icon">V</div>
-            <div className="velox-logo-text">
-              Velox<span className="teal-highlight">AI</span>
-            </div>
+          <div className="brand velox-logo" onClick={user ? onNewConversation : undefined}>
+            <VeloxMark size={34} />
+            <span className="brand-name">
+              Velox<b>AI</b>
+            </span>
           </div>
 
           <button
@@ -288,7 +260,21 @@ export const ChatSidebar = ({
                 onCloseMobile();
               }}
             >
-              <span>+</span> New chat
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ flexShrink: 0 }}
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              <span>New chat</span>
             </button>
           </div>
         )}
@@ -310,40 +296,15 @@ export const ChatSidebar = ({
             </div>
           ) : conversations.length === 0 ? (
             <div className="velox-empty-sidebar-msg">
-              No chat history yet. Start a new conversation below.
+              No chat history yet. Start a new conversation above.
             </div>
           ) : (
-            <>
-              {/* TODAY Group */}
-              {todayConversations.length > 0 && (
-                <div className="velox-group-section">
-                  <div className="velox-group-title">TODAY</div>
-                  <div className="velox-group-list">
-                    {todayConversations.map((conv) => renderConversationItem(conv))}
-                  </div>
-                </div>
-              )}
-
-              {/* PICHLE 7 DIN Group */}
-              {pastConversations.length > 0 && (
-                <div className="velox-group-section">
-                  <div className="velox-group-title">PICHLE 7 DIN</div>
-                  <div className="velox-group-list">
-                    {pastConversations.map((conv) => renderConversationItem(conv))}
-                  </div>
-                </div>
-              )}
-
-              {/* OLDER Group */}
-              {olderConversations.length > 0 && (
-                <div className="velox-group-section">
-                  <div className="velox-group-title">OLDER</div>
-                  <div className="velox-group-list">
-                    {olderConversations.map((conv) => renderConversationItem(conv))}
-                  </div>
-                </div>
-              )}
-            </>
+            <div className="velox-group-section">
+              <div className="velox-group-title">Recents</div>
+              <div className="velox-group-list">
+                {conversations.map((conv) => renderConversationItem(conv))}
+              </div>
+            </div>
           )}
         </div>
 

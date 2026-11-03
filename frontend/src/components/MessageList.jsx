@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import VeloxMark from './VeloxMark.jsx';
 
 // Format standard AI markdown (bold, lists, code blocks, paragraphs)
 const renderFormattedText = (text) => {
@@ -86,12 +87,35 @@ export const MessageList = ({
   isLoading,
   onRegenerate,
   onSelectPrompt,
+  activeConversationId,
 }) => {
-  const scrollEndRef = useRef(null);
+  const canvasRef = useRef(null);
+  const prevConvIdRef = useRef(activeConversationId);
+  const prevMsgCountRef = useRef(messages?.length || 0);
 
   useEffect(() => {
-    scrollEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading]);
+    if (!canvasRef.current) return;
+
+    const isNewConversation = prevConvIdRef.current !== activeConversationId;
+    prevConvIdRef.current = activeConversationId;
+
+    if (isNewConversation) {
+      // Opening a conversation: show starting from top so the user's question is clearly visible
+      canvasRef.current.scrollTop = 0;
+      prevMsgCountRef.current = messages?.length || 0;
+      return;
+    }
+
+    // When new message is sent or AI is generating: scroll canvas smoothly without shifting outer containers
+    if ((messages?.length || 0) > prevMsgCountRef.current || isLoading) {
+      canvasRef.current.scrollTo({
+        top: canvasRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+
+    prevMsgCountRef.current = messages?.length || 0;
+  }, [messages, isLoading, activeConversationId]);
 
   const handleCopy = (textToCopy) => {
     if (navigator.clipboard) {
@@ -102,26 +126,22 @@ export const MessageList = ({
 
   if (!messages || messages.length === 0) {
     return (
-      <div className="velox-chat-canvas">
-        <div className="velox-chat-content-limit" style={{ margin: 'auto', textAlign: 'center' }}>
-          <div style={{ padding: '40px 20px', maxWidth: '600px', margin: '0 auto' }}>
-            <div className="velox-assistant-avatar" style={{ margin: '0 auto 16px auto', width: '38px', height: '38px', fontSize: '18px' }}>
-              V
-            </div>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '8px', color: '#ffffff' }}>
-              Velox<span style={{ color: '#2dd4bf' }}>AI</span>
-            </h2>
-            <p style={{ color: '#9496a8', fontSize: '0.92rem', lineHeight: '1.5', marginBottom: '24px' }}>
-              Your intelligent assistant connected to Google Gemini and MongoDB Atlas. Ask anything or pick a topic below to start.
-            </p>
-          </div>
+      <div ref={canvasRef} className="velox-chat-canvas">
+        <div className="velox-welcome-hero">
+          <VeloxMark size={72} />
+          <h2 className="velox-welcome-title">
+            Velox <span className="teal-highlight">AI</span>
+          </h2>
+          <p className="velox-welcome-subtitle">
+            Ask anything
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="velox-chat-canvas">
+    <div ref={canvasRef} className="velox-chat-canvas">
       <div className="velox-chat-content-limit">
         {messages.map((msg, index) => {
           const isUser = msg.sender === 'user';
@@ -137,10 +157,6 @@ export const MessageList = ({
           // Assistant message
           return (
             <div key={msg._id || index} className="velox-assistant-row">
-              <div className="velox-assistant-avatar" aria-hidden="true">
-                V
-              </div>
-
               <div className="velox-assistant-body">
                 <div className="velox-assistant-text">
                   {renderFormattedText(msg.text)}
@@ -199,9 +215,6 @@ export const MessageList = ({
 
         {isLoading && (
           <div className="velox-assistant-row">
-            <div className="velox-assistant-avatar" aria-hidden="true">
-              V
-            </div>
             <div className="velox-assistant-body">
               <div className="velox-thinking-bubble">
                 <span className="velox-thinking-dot" />
@@ -211,8 +224,6 @@ export const MessageList = ({
             </div>
           </div>
         )}
-
-        <div ref={scrollEndRef} />
       </div>
     </div>
   );

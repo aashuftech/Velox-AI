@@ -42,28 +42,8 @@ export const ChatInput = ({ onSendMessage, disabled }) => {
   return (
     <div className="velox-bottom-zone">
       <div className="velox-bottom-container">
-        {/* Composer Box Matching PDF */}
+        {/* Composer Box Matching Reference */}
         <form ref={formRef} onSubmit={handleSubmit} className="velox-composer-box">
-          <button
-            type="button"
-            className="velox-attachment-btn"
-            title="Attach file"
-            aria-label="Attach file"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-            </svg>
-          </button>
-
           <label htmlFor="velox-main-input" className="visually-hidden">
             Velox AI input
           </label>
@@ -101,9 +81,9 @@ export const ChatInput = ({ onSendMessage, disabled }) => {
           </button>
         </form>
 
-        {/* Disclaimer Text Matching PDF */}
+        {/* Disclaimer Text */}
         <div className="velox-disclaimer-text">
-          Velox AI galti kar sakta hai. Zaroori jaankari ek baar verify zaroor karein.
+          Velox AI can make mistakes please check double cross the info
         </div>
       </div>
     </div>

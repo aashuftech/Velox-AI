@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import VeloxMark from './VeloxMark.jsx';
 
 export const Login = ({ onLoginSuccess, onSwitchToSignup, onClose }) => {
   const [email, setEmail] = useState('');
@@ -77,11 +78,11 @@ export const Login = ({ onLoginSuccess, onSwitchToSignup, onClose }) => {
         )}
 
         {/* Velox AI Logo */}
-        <div className="velox-auth-logo">
-          <div className="velox-logo-icon">V</div>
-          <div className="velox-logo-text">
-            Velox<span className="teal-highlight">AI</span>
-          </div>
+        <div className="brand velox-auth-logo">
+          <VeloxMark size={38} />
+          <span className="brand-name" style={{ fontSize: '22px' }}>
+            Velox<b>AI</b>
+          </span>
         </div>
 
         <div className="velox-auth-header">

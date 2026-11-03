@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="vsg" gradientUnits="userSpaceOnUse" x1="8" y1="6" x2="40" y2="42">
+      <stop offset="0" stop-color="#2fb8a8" />
+      <stop offset=".5" stop-color="#5b5ed6" />
+      <stop offset="1" stop-color="#8b52cc" />
+    </linearGradient>
+    <mask id="vsmask">
+      <rect width="48" height="48" fill="#fff" />
+      <path d="M27.5 4L18.5 44" stroke="#000" stroke-width="3" />
+    </mask>
+  </defs>
+  <polygon points="6,9 17.5,9 24,25 30.5,9 42,9 28.5,40 19.5,40" fill="url(#vsg)" mask="url(#vsmask)" />
+</svg>

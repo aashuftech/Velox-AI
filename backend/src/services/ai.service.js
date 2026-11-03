@@ -1,9 +1,16 @@
 /**
- * AI Service supporting Gemini API and optional OpenAI fallback.
+ * AI Service supporting Gemini API with model failover and optional OpenAI fallback.
  */
 
-const GEMINI_MODEL = 'gemini-3.5-flash-lite';
-const GEMINI_TIMEOUT_MS = 15000;
+const GEMINI_MODELS = [
+  'gemini-3-flash-preview',
+  'gemini-3.5-flash-lite',
+  'gemini-flash-lite-latest',
+  'gemini-3.1-flash-lite',
+  'gemini-3.6-flash',
+  'gemini-3.5-flash',
+];
+const GEMINI_TIMEOUT_MS = 6000;
 
 const providerError = (provider, message) => {
   const error = new Error(message);
@@ -16,7 +23,7 @@ export const generateAIResponse = async (prompt, history = []) => {
   const openAiKey = process.env.OPENAI_API_KEY?.trim();
   const startTime = Date.now();
 
-  // 1. Google Gemini API Integration
+  // 1. Google Gemini API Integration with Automatic Model Failover
   if (geminiKey && geminiKey !== 'your_gemini_api_key_here') {
     // Sanitize and alternate turns strictly according to Gemini specification
     const sanitizedTurns = [];
@@ -63,45 +70,95 @@ export const generateAIResponse = async (prompt, history = []) => {
       });
     }
 
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': geminiKey,
-        },
-        signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
-        body: JSON.stringify({ contents: sanitizedTurns }),
-      });
+    let lastGeminiError = null;
 
-      if (response.ok) {
-        const data = await response.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-        if (!text) {
-          throw providerError('gemini', 'Gemini returned no response text.');
+    for (const model of GEMINI_MODELS) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': geminiKey,
+          },
+          signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+          body: JSON.stringify({ contents: sanitizedTurns }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const candidate = data?.candidates?.[0];
+          const text = candidate?.content?.parts?.[0]?.text?.trim();
+          if (text) {
+            const latencyMs = Date.now() - startTime;
+            return {
+              text,
+              provider: `gemini (${model})`,
+              latencyMs,
+            };
+          }
+          if (candidate?.finishReason === 'SAFETY') {
+            return {
+              text: 'I cannot generate a response for this query due to safety guidelines.',
+              provider: `gemini (${model})`,
+              latencyMs: Date.now() - startTime,
+            };
+          }
+        } else {
+          const errData = await response.json().catch(() => ({}));
+          const errMsg = errData?.error?.message || `HTTP ${response.status}`;
+          console.warn(`[AIService] ${model} failed (${response.status}): ${errMsg}`);
+          lastGeminiError = errMsg;
         }
-        const latencyMs = Date.now() - startTime;
-        return {
-          text,
-          provider: `gemini (${GEMINI_MODEL})`,
-          latencyMs,
-        };
+      } catch (err) {
+        const isTimeout = err.name === 'TimeoutError';
+        const errMsg = isTimeout
+          ? `Gemini (${model}) timed out after ${GEMINI_TIMEOUT_MS / 1000}s.`
+          : err.message;
+        console.warn(`[AIService] ${errMsg}`);
+        lastGeminiError = errMsg;
       }
+    }
 
-      console.warn(`[AIService] Gemini HTTP ${response.status}.`);
-      throw providerError('gemini', `Gemini request failed with HTTP ${response.status}.`);
-    } catch (err) {
-      const message =
-        err.name === 'TimeoutError'
-          ? `Gemini request timed out after ${GEMINI_TIMEOUT_MS / 1000} seconds.`
-          : err.provider
-            ? err.message
-            : 'Gemini request could not be completed.';
-      console.warn(`[AIService] ${message}`);
-      if (!openAiKey || openAiKey === 'your_openai_api_key_here') {
-        throw providerError('gemini', message);
+    // Quick pause & retry on top resilient models if rate limited
+    if (
+      lastGeminiError &&
+      (lastGeminiError.includes('429') ||
+        lastGeminiError.includes('quota') ||
+        lastGeminiError.includes('overloaded'))
+    ) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      for (const retryModel of ['gemini-3-flash-preview', 'gemini-flash-lite-latest']) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${retryModel}:generateContent`;
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': geminiKey,
+            },
+            signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+            body: JSON.stringify({ contents: sanitizedTurns }),
+          });
+          if (response.ok) {
+            const data = await response.json();
+            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+            if (text) {
+              return {
+                text,
+                provider: `gemini (${retryModel})`,
+                latencyMs: Date.now() - startTime,
+              };
+            }
+          }
+        } catch {
+          // ignore retry failure
+        }
       }
+    }
+
+    if (!openAiKey || openAiKey === 'your_openai_api_key_here') {
+      throw providerError('gemini', lastGeminiError || 'Gemini request could not be completed.');
     }
   }
 
